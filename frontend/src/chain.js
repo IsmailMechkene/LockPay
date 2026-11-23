@@ -12,7 +12,7 @@ export const RPC_URL = "http://127.0.0.1:8545";
 export const CHAIN_ID = 31337;
 export const CHAIN_ID_HEX = "0x7a69"; // 31337
 
-/** Status enum, same order as in TrustLance.sol */
+/** Status enum, same order as in LockPay.sol */
 export const STATUS = ["Open", "Accepted", "Delivered", "Completed", "Cancelled", "Disputed", "Resolved"];
 
 /** Read-only connection to the local node. */

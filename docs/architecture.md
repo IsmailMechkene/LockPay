@@ -1,4 +1,4 @@
-# Architecture de TrustLance
+# Architecture de LockPay
 
 Ce document décrit comment les morceaux de la DApp s'emboîtent : qui parle à qui, ce qui est stocké où, et comment se déroule une mission de bout en bout.
 
@@ -13,7 +13,7 @@ flowchart LR
     end
 
     subgraph "Nœud Hardhat (127.0.0.1:8545, chainId 31337)"
-        SC["Contrat TrustLance.sol<br/>missions, ETH en séquestre"]
+        SC["Contrat LockPay.sol<br/>missions, ETH en séquestre"]
         EV[["Événements<br/>MissionCreated, WorkDelivered…"]]
     end
 
@@ -55,7 +55,7 @@ flowchart LR
     F(["Freelance"])
     A(["Arbitre<br/>(déployeur)"])
 
-    subgraph TrustLance
+    subgraph LockPay
         UC1["Créer une mission<br/>+ bloquer l'ETH"]
         UC2["Annuler une mission ouverte"]
         UC3["Accepter une mission"]
@@ -111,7 +111,7 @@ sequenceDiagram
     actor F as Freelance
     participant UI as Frontend
     participant MM as MetaMask
-    participant SC as TrustLance.sol
+    participant SC as LockPay.sol
 
     C->>UI: Titre, description, 0.5 ETH, échéance
     UI->>UI: descriptionHash = keccak256(description)<br/>texte → localStorage
@@ -152,7 +152,7 @@ sequenceDiagram
 
 ## 7. Centralisé vs décentralisé
 
-| Critère | Plateforme centralisée (type Malt, Fiverr) | TrustLance (contrat Ethereum) |
+| Critère | Plateforme centralisée (type Malt, Fiverr) | LockPay (contrat Ethereum) |
 |---|---|---|
 | Garde des fonds | La plateforme détient l'argent sur son compte bancaire | Le contrat détient l'ETH ; personne ne peut le déplacer hors des règles codées |
 | Règles de paiement | Conditions générales, modifiables par la plateforme | Code public et immuable une fois déployé |

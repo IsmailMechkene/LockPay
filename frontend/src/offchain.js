@@ -4,7 +4,7 @@
 // prove a text matches the mission by re-hashing it and comparing.
 import { ethers } from "ethers";
 
-const KEY = "trustlance.offchain.v1";
+const KEY = "lockpay.offchain.v1";
 
 /** keccak256 of a UTF-8 text (same as ethers.id / Solidity keccak256(bytes(text))). */
 export function hashText(text) {

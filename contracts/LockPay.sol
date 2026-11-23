@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-/// @title  TrustLance - escrow for student freelance missions
+/// @title  LockPay - escrow for student freelance missions
 /// @author IGL4 Blockchain project
 /// @notice A client locks ETH for a mission. A freelancer accepts it, delivers
 ///         the work (only its hash is stored on-chain) and is paid when the
@@ -11,7 +11,7 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 /// @dev    Every function that sends ETH follows checks-effects-interactions:
 ///         the status is updated BEFORE the transfer, and `nonReentrant` blocks
 ///         re-entry. A mission can therefore never be paid twice.
-contract TrustLance is ReentrancyGuard {
+contract LockPay is ReentrancyGuard {
     // ---------------------------------------------------------------------
     // Types
     // ---------------------------------------------------------------------

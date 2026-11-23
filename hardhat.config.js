@@ -1,4 +1,4 @@
-// Hardhat 3 configuration for TrustLance.
+// Hardhat 3 configuration for LockPay.
 // The toolbox bundles ethers v6, mocha + chai matchers and the network helpers.
 import { defineConfig } from "hardhat/config";
 import hardhatToolboxMochaEthers from "@nomicfoundation/hardhat-toolbox-mocha-ethers";

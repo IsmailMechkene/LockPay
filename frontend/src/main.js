@@ -1,4 +1,4 @@
-// TrustLance frontend — single page, vanilla JS.
+// LockPay frontend — single page, vanilla JS.
 //
 // Flow of the file:
 //   1. state          : everything the UI shows
@@ -24,7 +24,7 @@ import {
 import { hashText, hashFile, saveText, getText, saveFileMeta, getFileMeta, importSeed } from "./offchain.js";
 import { esc, short, eth, accountIndex, sameAddress, date, clock, duration, toDatetimeLocal } from "./format.js";
 
-const REVIEW_PERIOD = 3 * 24 * 60 * 60; // must match TrustLance.REVIEW_PERIOD
+const REVIEW_PERIOD = 3 * 24 * 60 * 60; // must match LockPay.REVIEW_PERIOD
 
 const $ = (selector) => document.querySelector(selector);
 

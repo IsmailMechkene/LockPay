@@ -1,4 +1,4 @@
-// Deploys TrustLance and exports its address + ABI for the frontend.
+// Deploys LockPay and exports its address + ABI for the frontend.
 // Usage: npx hardhat run scripts/deploy.js --network localhost
 import { network, artifacts } from "hardhat";
 import { writeFileSync, mkdirSync } from "node:fs";
@@ -12,15 +12,15 @@ const { ethers } = await network.create();
 const [deployer] = await ethers.getSigners();
 const { chainId } = await ethers.provider.getNetwork();
 
-console.log(`Deploying TrustLance with ${deployer.address} (chainId ${chainId})...`);
+console.log(`Deploying LockPay with ${deployer.address} (chainId ${chainId})...`);
 
-const trustLance = await ethers.deployContract("TrustLance");
-await trustLance.waitForDeployment();
-const address = await trustLance.getAddress();
-const deployBlock = (await trustLance.deploymentTransaction().wait()).blockNumber;
+const lockPay = await ethers.deployContract("LockPay");
+await lockPay.waitForDeployment();
+const address = await lockPay.getAddress();
+const deployBlock = (await lockPay.deploymentTransaction().wait()).blockNumber;
 
 // The ABI comes from the compiled artifact.
-const { abi } = await artifacts.readArtifact("TrustLance");
+const { abi } = await artifacts.readArtifact("LockPay");
 
 mkdirSync(dirname(OUTPUT), { recursive: true });
 writeFileSync(
@@ -28,6 +28,6 @@ writeFileSync(
   JSON.stringify({ address, chainId: Number(chainId), arbiter: deployer.address, deployBlock, abi }, null, 2),
 );
 
-console.log(`TrustLance deployed at ${address} (block ${deployBlock})`);
+console.log(`LockPay deployed at ${address} (block ${deployBlock})`);
 console.log(`Arbiter: ${deployer.address}`);
 console.log(`Address + ABI written to ${OUTPUT}`);

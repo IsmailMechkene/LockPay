@@ -1,4 +1,4 @@
-# TrustLance
+# LockPay
 
 **Plateforme de séquestre (escrow) Ethereum pour les missions freelance étudiantes.** Projet Blockchain, IGL4.
 
@@ -81,8 +81,8 @@ Le hash est un **engagement** : si quelqu'un modifie la description ou le fichie
 ## 4. Structure du projet
 
 ```
-contracts/TrustLance.sol      Smart contract (NatSpec sur chaque fonction)
-test/TrustLance.test.js       23 tests mocha/chai (succès + rejets)
+contracts/LockPay.sol      Smart contract (NatSpec sur chaque fonction)
+test/LockPay.test.js       23 tests mocha/chai (succès + rejets)
 scripts/deploy.js             Déploie et écrit adresse + ABI dans frontend/src/contract.json
 scripts/seed.js               Crée 2 missions de démonstration
 hardhat.config.js             Config Hardhat 3 (solc 0.8.28, réseau localhost)
@@ -113,8 +113,8 @@ docs/architecture.md          Diagrammes Mermaid + comparatif
 ### 6.1 Installer les dépendances
 
 ```bash
-git clone https://github.com/IsmailMechkene/LockPay.git trustlance
-cd trustlance
+git clone https://github.com/IsmailMechkene/LockPay.git lockpay
+cd lockpay
 npm install
 npm --prefix frontend install
 ```
@@ -235,7 +235,7 @@ Préparation : nœud lancé, `npm run deploy` et `npm run seed` exécutés, fron
 npx hardhat test
 ```
 
-23 tests dans [test/TrustLance.test.js](test/TrustLance.test.js), qui utilisent `loadFixture` (chaque test repart d'un instantané propre) et `time.increase` pour simuler le passage du temps.
+23 tests dans [test/LockPay.test.js](test/LockPay.test.js), qui utilisent `loadFixture` (chaque test repart d'un instantané propre) et `time.increase` pour simuler le passage du temps.
 
 | Catégorie | Tests |
 |---|---|

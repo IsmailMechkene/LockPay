@@ -1,7 +1,7 @@
 {
-  "name": "trustlance",
+  "name": "lockpay",
   "version": "1.0.0",
-  "description": "TrustLance - escrow DApp for student freelance missions (IGL4 Blockchain project)",
+  "description": "LockPay - escrow DApp for student freelance missions (IGL4 Blockchain project)",
   "type": "module",
   "private": true,
   "scripts": {

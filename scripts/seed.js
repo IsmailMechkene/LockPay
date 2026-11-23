@@ -15,7 +15,7 @@ const { address, abi } = JSON.parse(readFileSync(resolve(root, "frontend/src/con
 
 const { ethers } = await network.create();
 const [, client, freelancer] = await ethers.getSigners();
-const trustLance = new ethers.Contract(address, abi, ethers.provider);
+const lockPay = new ethers.Contract(address, abi, ethers.provider);
 
 const DAY = 24 * 60 * 60;
 const now = (await ethers.provider.getBlock("latest")).timestamp;
@@ -43,7 +43,7 @@ const offchain = {};
 for (const m of missions) {
   const descriptionHash = ethers.id(m.description); // keccak256(utf8 bytes)
   offchain[descriptionHash] = m.description;
-  const tx = await trustLance
+  const tx = await lockPay
     .connect(client)
     .createMission(m.title, descriptionHash, m.deadline, { value: ethers.parseEther(m.eth) });
   await tx.wait();
@@ -51,8 +51,8 @@ for (const m of missions) {
 }
 
 // Mission #2 is accepted by the freelancer so the demo starts with two states.
-const count = await trustLance.missionCount();
-await (await trustLance.connect(freelancer).acceptMission(count)).wait();
+const count = await lockPay.missionCount();
+await (await lockPay.connect(freelancer).acceptMission(count)).wait();
 console.log(`Mission #${count} accepted by ${freelancer.address}`);
 
 writeFileSync(resolve(root, "frontend/public/offchain-seed.json"), JSON.stringify(offchain, null, 2));
