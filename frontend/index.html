@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="TrustLance — séquestre Ethereum pour missions freelance étudiantes" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>TrustLance</title>
+  </head>
+  <body>
+    <!-- Top bar: brand, chain status, wallet -->
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="TrustLance, accueil">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M10 14V10a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+          <rect x="5" y="14" width="22" height="15" rx="3" fill="currentColor" />
+          <path d="M11 19h10M16 19v6.5" stroke="var(--paper)" stroke-width="2.4" stroke-linecap="round" />
+        </svg>
+        <span class="brand-text">
+          <strong>TrustLance</strong>
+          <span>Séquestre de missions étudiantes</span>
+        </span>
+      </a>
+      <div class="chainbar" id="chainbar"></div>
+      <div class="wallet" id="wallet"></div>
+    </header>
+
+    <!-- Error / success messages (fixed, always visible) -->
+    <div class="notices" id="notices" aria-live="assertive"></div>
+
+    <main class="layout">
+      <!-- Left column: create a mission -->
+      <aside class="col col-form">
+        <section class="panel">
+          <header class="panel-head">
+            <h2>Publier une mission</h2>
+            <p>Le montant est bloqué dans le contrat jusqu'à la validation du travail.</p>
+          </header>
+
+          <form id="create-form" class="form" novalidate>
+            <label class="field">
+              <span class="field-label">Titre</span>
+              <input name="title" type="text" maxlength="80" placeholder="Ex. Maquette Figma de l'appli BDE" required />
+            </label>
+
+            <label class="field">
+              <span class="field-label">Description <em>hors-chaîne</em></span>
+              <textarea name="description" rows="5" placeholder="Livrables attendus, format, critères d'acceptation…"></textarea>
+              <span class="field-hint hash-preview">
+                <i data-lucide="fingerprint"></i>
+                <span>Empreinte envoyée&nbsp;:</span>
+                <code id="description-hash">—</code>
+              </span>
+            </label>
+
+            <div class="field-row">
+              <label class="field">
+                <span class="field-label">Montant</span>
+                <span class="input-affix">
+                  <input name="amount" type="text" inputmode="decimal" placeholder="0.5" autocomplete="off" />
+                  <span class="affix">ETH</span>
+                </span>
+              </label>
+              <label class="field">
+                <span class="field-label">Échéance</span>
+                <input name="deadline" type="datetime-local" />
+              </label>
+            </div>
+
+            <button class="btn btn-primary btn-block" type="submit" id="create-submit">
+              <i data-lucide="lock"></i><span>Bloquer les fonds et publier</span>
+            </button>
+            <p class="form-foot" id="create-foot"></p>
+          </form>
+        </section>
+
+        <section class="panel panel-quiet storage-legend">
+          <h3>Où vont les données&nbsp;?</h3>
+          <dl>
+            <div>
+              <dt><i data-lucide="link"></i>Sur la blockchain</dt>
+              <dd>Titre, montant, échéance, adresses, statut et les <b>empreintes keccak256</b> de la description et du livrable.</dd>
+            </div>
+            <div>
+              <dt><i data-lucide="hard-drive"></i>Hors chaîne</dt>
+              <dd>Le texte de la description et les fichiers livrés restent dans ce navigateur (localStorage) ou chez le freelance.</dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+
+      <!-- Center column: missions ledger -->
+      <section class="col col-ledger" aria-labelledby="ledger-title">
+        <header class="ledger-head">
+          <div>
+            <h1 id="ledger-title">Missions</h1>
+            <p class="ledger-summary" id="ledger-summary"></p>
+          </div>
+          <label class="toggle" title="Affiche toutes les actions, même interdites, pour montrer que c'est le contrat qui refuse.">
+            <input type="checkbox" id="demo-toggle" />
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span>Mode démo</span>
+          </label>
+        </header>
+        <nav class="filters" id="filters" aria-label="Filtrer les missions"></nav>
+        <div class="ledger" id="ledger"></div>
+      </section>
+
+      <!-- Right column: live event log -->
+      <aside class="col col-log" aria-labelledby="log-title">
+        <section class="panel panel-log">
+          <header class="panel-head panel-head-row">
+            <h2 id="log-title">Journal on-chain</h2>
+            <span class="live" id="live-indicator"><span class="live-dot"></span>en direct</span>
+          </header>
+          <ol class="log" id="log"></ol>
+        </section>
+      </aside>
+    </main>
+
+    <dialog id="dialog" class="dialog"></dialog>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
