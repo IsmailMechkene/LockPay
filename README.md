@@ -21,6 +21,8 @@ Un client publie une mission et bloque le paiement en ETH dans un smart contract
 9. [Limites connues](#9-limites-connues)
 10. [Sécurité](#10-sécurité)
 
+Guide d'utilisation de l'application, par rôle : [docs/guide-utilisation.md](docs/guide-utilisation.md).
+
 Documentation complémentaire : [docs/architecture.md](docs/architecture.md) (architecture, cas d'utilisation, diagramme de séquence, comparatif centralisé / décentralisé).
 
 ---
