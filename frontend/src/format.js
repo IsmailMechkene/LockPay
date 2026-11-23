@@ -1,5 +1,6 @@
 // Small display helpers (pure functions, no blockchain access).
 import { ethers } from "ethers";
+import { getLang, t } from "./i18n.js";
 
 /** Escapes user / chain text before putting it in innerHTML. */
 export function esc(value) {
@@ -40,29 +41,37 @@ export function sameAddress(a, b) {
   return !!a && !!b && a.toLowerCase() === b.toLowerCase();
 }
 
-const dateFmt = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
-const timeFmt = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+// Date formatters follow the selected language (fr-FR / en-GB).
+const formatters = {};
+function fmt(kind) {
+  const locale = getLang() === "en" ? "en-GB" : "fr-FR";
+  const key = `${kind}:${locale}`;
+  formatters[key] ??= new Intl.DateTimeFormat(locale, kind === "date"
+    ? { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }
+    : { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  return formatters[key];
+}
 
 /** Unix seconds -> "24 nov., 14:05" */
 export function date(seconds) {
-  return dateFmt.format(new Date(seconds * 1000));
+  return fmt("date").format(new Date(seconds * 1000));
 }
 
 /** Unix seconds -> "14:05:32" */
 export function clock(seconds) {
-  return timeFmt.format(new Date(seconds * 1000));
+  return fmt("clock").format(new Date(seconds * 1000));
 }
 
-/** Seconds -> "2 j 4 h", "3 h 12 min", "45 s" */
+/** Seconds -> "2 j 4 h", "3 h 12 min", "45 s" (translated units) */
 export function duration(seconds) {
   const s = Math.max(0, Math.round(seconds));
   const d = Math.floor(s / 86400);
   const h = Math.floor((s % 86400) / 3600);
   const m = Math.floor((s % 3600) / 60);
-  if (d > 0) return `${d} j ${h} h`;
-  if (h > 0) return `${h} h ${m} min`;
-  if (m > 0) return `${m} min`;
-  return `${s} s`;
+  if (d > 0) return t("dur.d", { d, h });
+  if (h > 0) return t("dur.h", { h, m });
+  if (m > 0) return t("dur.m", { m });
+  return t("dur.s", { s });
 }
 
 /** Unix seconds -> value for <input type="datetime-local"> (local time). */

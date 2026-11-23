@@ -2,6 +2,7 @@
 // Reads go straight to the Hardhat node (fast, works before connecting).
 // Writes are signed by MetaMask.
 import { ethers } from "ethers";
+import { t, hasKey } from "./i18n.js";
 
 // contract.json is written by scripts/deploy.js. import.meta.glob does not
 // crash the build when the file is missing (contract not deployed yet).
@@ -35,14 +36,19 @@ export function hasMetaMask() {
   return typeof window.ethereum !== "undefined";
 }
 
+/** MetaMask provider, created on first use (also after a restored session). */
+function wallet() {
+  browserProvider ??= new ethers.BrowserProvider(window.ethereum);
+  return browserProvider;
+}
+
 /** Asks MetaMask for the account. Returns { account, chainId }. */
 export async function connectWallet() {
   if (!hasMetaMask()) {
-    throw new Error("MetaMask n'est pas installé dans ce navigateur.");
+    throw new Error(t("err.noMetaMask"));
   }
-  browserProvider = new ethers.BrowserProvider(window.ethereum);
-  const [account] = await browserProvider.send("eth_requestAccounts", []);
-  const chainId = Number(await browserProvider.send("eth_chainId", []));
+  const [account] = await wallet().send("eth_requestAccounts", []);
+  const chainId = Number(await wallet().send("eth_chainId", []));
   return { account: ethers.getAddress(account), chainId };
 }
 
@@ -93,6 +99,11 @@ export async function fetchMissions() {
   return missions.reverse();
 }
 
+/** False when contract.json points to an address with no code, e.g. the node was restarted. */
+export async function isContractDeployed() {
+  return (await readProvider.getCode(deployment.address)) !== "0x";
+}
+
 export async function fetchEscrowBalance() {
   return readProvider.getBalance(deployment.address);
 }
@@ -113,7 +124,7 @@ export async function sendTx(account, method, args, overrides = {}, onStage = ()
   await readContract[method].staticCall(...args, { ...overrides, from: account });
 
   onStage("sign");
-  const signer = await browserProvider.getSigner(account);
+  const signer = await wallet().getSigner(account);
   const tx = await readContract.connect(signer)[method](...args, overrides);
 
   onStage("mining");
@@ -130,59 +141,32 @@ export async function timeTravel(seconds) {
 // Errors -> human readable messages
 // ---------------------------------------------------------------------------
 
-/** French explanation for each require() message of the contract. */
-const EXPLANATIONS = {
-  "Mission not found": "Cette mission n'existe pas.",
-  "Only client": "Seul le client qui a créé la mission peut faire cette action.",
-  "Only freelancer": "Seul le freelance assigné à la mission peut faire cette action.",
-  "Only client or freelancer": "Seules les deux parties de la mission peuvent ouvrir un litige.",
-  "Only arbiter": "Seul l'arbitre (le déployeur du contrat) peut trancher un litige.",
-  "Invalid state": "Cette action n'est pas possible dans l'état actuel de la mission.",
-  "Amount must be > 0": "Le montant bloqué doit être supérieur à 0 ETH.",
-  "Deadline must be in the future": "L'échéance doit être postérieure à l'heure actuelle de la blockchain.",
-  "Title required": "Le titre est obligatoire.",
-  "Client cannot accept own mission": "Un client ne peut pas accepter sa propre mission.",
-  "Deadline passed": "L'échéance de la mission est dépassée.",
-  "Empty deliverable hash": "L'empreinte du livrable est vide.",
-  "Review period not over": "La période de revue de 3 jours n'est pas terminée : le client peut encore répondre.",
-  "Share must be <= 10000 bps": "La part du freelance doit être comprise entre 0 et 10 000 points de base.",
-  "Transfer failed": "Le transfert d'ETH a échoué.",
-};
-
 /**
  * Turns any ethers / MetaMask error into { title, reason, explanation }.
- * `reason` is the raw require() string when the contract reverted.
+ * `reason` is the raw require() string when the contract reverted; the
+ * translated explanation of each reason lives in i18n.js ("reason.<text>").
  */
 export function explainError(err) {
   if (err?.code === "ACTION_REJECTED" || err?.info?.error?.code === 4001 || err?.code === 4001) {
-    return { title: "Signature refusée", reason: null, explanation: "La transaction a été annulée dans MetaMask." };
+    return { title: t("err.rejectedTitle"), reason: null, explanation: t("err.rejectedText") };
   }
 
   const reason = err?.reason ?? err?.revert?.args?.[0] ?? null;
   if (reason) {
     return {
-      title: "Transaction rejetée par le contrat",
+      title: t("err.contractTitle"),
       reason,
-      explanation: EXPLANATIONS[reason] ?? "Le contrat a refusé cette opération.",
+      explanation: hasKey(`reason.${reason}`) ? t(`reason.${reason}`) : t("err.contractGeneric"),
     };
   }
 
   if (err?.code === "NETWORK_ERROR" || /ECONNREFUSED|Failed to fetch/i.test(err?.message ?? "")) {
-    return {
-      title: "Nœud Hardhat injoignable",
-      reason: null,
-      explanation: "Lancez « npx hardhat node » puis rechargez la page.",
-    };
+    return { title: t("err.nodeTitle"), reason: null, explanation: t("err.nodeText") };
   }
 
   if (/nonce/i.test(err?.message ?? "")) {
-    return {
-      title: "Nonce MetaMask désynchronisé",
-      reason: null,
-      explanation:
-        "Le nœud a été redémarré. Dans MetaMask : Paramètres > Avancé > Effacer les données de l'onglet activité.",
-    };
+    return { title: t("err.nonceTitle"), reason: null, explanation: t("err.nonceText") };
   }
 
-  return { title: "Erreur", reason: null, explanation: err?.shortMessage ?? err?.message ?? String(err) };
+  return { title: t("err.generic"), reason: null, explanation: err?.shortMessage ?? err?.message ?? String(err) };
 }

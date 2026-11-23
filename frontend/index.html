@@ -8,9 +8,10 @@
     <title>LockPay</title>
   </head>
   <body>
-    <!-- Top bar: brand, chain status, wallet -->
+    <!-- Top bar: brand, chain status, language, wallet.
+         Texts with data-i18n* are filled by i18n.js (French / English). -->
     <header class="topbar">
-      <a class="brand" href="/" aria-label="LockPay, accueil">
+      <a class="brand" href="/" aria-label="LockPay">
         <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
           <path d="M10 14V10a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
           <rect x="5" y="14" width="22" height="15" rx="3" fill="currentColor" />
@@ -19,10 +20,14 @@
         </svg>
         <span class="brand-text">
           <strong>LockPay</strong>
-          <span>Séquestre de missions étudiantes</span>
+          <span data-i18n="brand.tagline"></span>
         </span>
       </a>
       <div class="chainbar" id="chainbar"></div>
+      <div class="lang-switch" role="group" data-i18n-aria="lang.label">
+        <button type="button" data-lang="fr" lang="fr">FR</button>
+        <button type="button" data-lang="en" lang="en">EN</button>
+      </div>
       <div class="wallet" id="wallet"></div>
     </header>
 
@@ -34,76 +39,77 @@
       <aside class="col col-form">
         <section class="panel">
           <header class="panel-head">
-            <h2>Publier une mission</h2>
-            <p>Le montant est bloqué dans le contrat jusqu'à la validation du travail.</p>
+            <h2 data-i18n="form.heading"></h2>
+            <p data-i18n="form.subtitle"></p>
           </header>
 
           <form id="create-form" class="form" novalidate>
             <label class="field">
-              <span class="field-label">Titre</span>
-              <input name="title" type="text" maxlength="80" placeholder="Ex. Maquette Figma de l'appli BDE" required />
+              <span class="field-label" data-i18n="form.title"></span>
+              <input name="title" type="text" maxlength="80" data-i18n-placeholder="form.titlePh" required />
             </label>
 
             <label class="field">
-              <span class="field-label">Description <em>hors-chaîne</em></span>
-              <textarea name="description" rows="5" placeholder="Livrables attendus, format, critères d'acceptation…"></textarea>
+              <span class="field-label"><span data-i18n="form.description"></span> <em data-i18n="desc.offchain"></em></span>
+              <textarea name="description" rows="5" data-i18n-placeholder="form.descPh"></textarea>
               <span class="field-hint hash-preview">
                 <i data-lucide="fingerprint"></i>
-                <span>Empreinte envoyée&nbsp;:</span>
+                <span data-i18n="form.hashSent"></span>
                 <code id="description-hash">—</code>
               </span>
             </label>
 
             <div class="field-row">
               <label class="field">
-                <span class="field-label">Montant</span>
+                <span class="field-label" data-i18n="form.amount"></span>
                 <span class="input-affix">
                   <input name="amount" type="text" inputmode="decimal" placeholder="0.5" autocomplete="off" />
                   <span class="affix">ETH</span>
                 </span>
               </label>
               <label class="field">
-                <span class="field-label">Échéance</span>
+                <span class="field-label" data-i18n="form.deadline"></span>
                 <input name="deadline" type="datetime-local" />
               </label>
             </div>
 
-            <button class="btn btn-primary btn-block" type="submit" id="create-submit">
-              <i data-lucide="lock"></i><span>Bloquer les fonds et publier</span>
-            </button>
+            <button class="btn btn-primary btn-block" type="submit" id="create-submit"></button>
             <p class="form-foot" id="create-foot"></p>
           </form>
         </section>
 
         <section class="panel panel-quiet storage-legend">
-          <h3>Où vont les données&nbsp;?</h3>
+          <h3 data-i18n="storage.title"></h3>
           <dl>
             <div>
-              <dt><i data-lucide="link"></i>Sur la blockchain</dt>
-              <dd>Titre, montant, échéance, adresses, statut et les <b>empreintes keccak256</b> de la description et du livrable.</dd>
+              <dt><i data-lucide="link"></i><span data-i18n="storage.on"></span></dt>
+              <dd data-i18n-html="storage.onText"></dd>
             </div>
             <div>
-              <dt><i data-lucide="hard-drive"></i>Hors chaîne</dt>
-              <dd>Le texte de la description et les fichiers livrés restent dans ce navigateur (localStorage) ou chez le freelance.</dd>
+              <dt><i data-lucide="hard-drive"></i><span data-i18n="storage.off"></span></dt>
+              <dd data-i18n-html="storage.offText"></dd>
             </div>
           </dl>
         </section>
       </aside>
 
-      <!-- Center column: missions ledger -->
+      <!-- Center column: setup checklist, to-do strip, missions ledger -->
       <section class="col col-ledger" aria-labelledby="ledger-title">
+        <div id="setup"></div>
+        <div id="todo"></div>
+
         <header class="ledger-head">
           <div>
-            <h1 id="ledger-title">Missions</h1>
+            <h1 id="ledger-title" data-i18n="ledger.title"></h1>
             <p class="ledger-summary" id="ledger-summary"></p>
           </div>
-          <label class="toggle" title="Affiche toutes les actions, même interdites, pour montrer que c'est le contrat qui refuse.">
+          <label class="toggle" data-i18n-title="ledger.demoTitle">
             <input type="checkbox" id="demo-toggle" />
             <span class="toggle-track"><span class="toggle-thumb"></span></span>
-            <span>Mode démo</span>
+            <span data-i18n="ledger.demo"></span>
           </label>
         </header>
-        <nav class="filters" id="filters" aria-label="Filtrer les missions"></nav>
+        <nav class="filters" id="filters" data-i18n-aria="filter.aria"></nav>
         <div class="ledger" id="ledger"></div>
       </section>
 
@@ -111,8 +117,8 @@
       <aside class="col col-log" aria-labelledby="log-title">
         <section class="panel panel-log">
           <header class="panel-head panel-head-row">
-            <h2 id="log-title">Journal on-chain</h2>
-            <span class="live" id="live-indicator"><span class="live-dot"></span>en direct</span>
+            <h2 id="log-title" data-i18n="log.title"></h2>
+            <span class="live" id="live-indicator"><span class="live-dot"></span><span id="live-text"></span></span>
           </header>
           <ol class="log" id="log"></ol>
         </section>
