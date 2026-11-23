@@ -90,6 +90,7 @@ frontend/                     DApp Vite + JavaScript vanilla + ethers v6
   src/chain.js                Connexion au nœud, MetaMask, transactions, messages d'erreur
   src/offchain.js             Stockage hors chaîne + calcul des hash keccak256
   src/main.js                 État, rendu, actions, journal des événements
+  src/i18n.js                 Textes de l'interface en français et en anglais
   src/format.js, icons.js     Formatage et icônes (Lucide)
   src/style.css               Styles
 docs/architecture.md          Diagrammes Mermaid + comparatif
@@ -177,6 +178,14 @@ npm run frontend   # = npm --prefix frontend run dev
 
 Ouvrir l'URL affichée par Vite (en général `http://localhost:5173` ; si ce port est pris, Vite choisit le suivant), puis cliquer **Connecter MetaMask**.
 
+Si quelque chose manque (nœud arrêté, contrat non déployé, MetaMask absent, mauvais réseau), un encadré **« Avant de commencer »** affiche la prochaine étape à faire et se coche tout seul quand elle est réglée. Le bouton **FR / EN** de la barre du haut change la langue de l'interface.
+
+### Lire l'interface
+
+- **À faire** (en haut de la liste) : les missions qui attendent une action du compte connecté, avec le bouton correspondant.
+- Chaque ligne de mission donne son statut en une phrase (« Travail livré : validez-le ou ouvrez un litige · reste 2 j 23 h ») et, s'il y en a une, l'action principale juste en dessous. Cliquer sur la ligne déplie le détail : description, hash, échéances et actions secondaires (annuler, litige…).
+- En haut à droite : le badge **Arbitre** pour le compte #0, sinon le nombre de missions où vous êtes client et freelance.
+
 ### Après un redémarrage du nœud
 
 Un nœud Hardhat redémarré repart de zéro, mais MetaMask garde l'ancien compteur de transactions (nonce) :
@@ -194,18 +203,18 @@ Préparation : nœud lancé, `npm run deploy` et `npm run seed` exécutés, fron
 | # | Compte MetaMask | Action | Ce qu'on montre |
 |---|---|---|---|
 | 1 | Client (#1) | Formulaire : titre « Logo pour le club photo », une description, `0.5` ETH, échéance par défaut → **Bloquer les fonds et publier** | L'empreinte de la description se calcule en direct sous le champ. Le bandeau indique 0.5 ETH de plus en séquestre. Événement `MissionCreated`. |
-| 2 | Client | Déplier la mission | Statut **Ouverte**, badge « Empreinte vérifiée » : le texte local correspond au hash on-chain. |
-| 3 | Freelance (#2) | **Accepter** | Statut **Acceptée**, `MissionAccepted`. |
-| 4 | Freelance | **Livrer le travail** → onglet *Fichier* → choisir un fichier quelconque → **Envoyer l'empreinte** | Le hash keccak256 du fichier s'affiche avant l'envoi : le fichier ne quitte pas le navigateur. `WorkDelivered`. |
+| 2 | Client | Cliquer sur la ligne pour la déplier | Statut **Ouverte**, badge « Empreinte vérifiée » : le texte local correspond au hash on-chain. |
+| 3 | Freelance (#2) | **Accepter** (sous la phrase de statut) | Statut **Acceptée**, `MissionAccepted`. |
+| 4 | Freelance | **Livrer le travail** (sur la ligne, ou dans « À faire ») → onglet *Fichier* → choisir un fichier quelconque → **Envoyer l'empreinte** | Le hash keccak256 du fichier s'affiche avant l'envoi : le fichier ne quitte pas le navigateur. `WorkDelivered`. |
 | 5 | Client | **Vérifier un fichier** → déposer le même fichier, puis un autre | « Identique au hash on-chain » puis « Différent ». |
-| 6 | Client | **Approuver et payer** | Statut **Payée**, `PaymentReleased`, le solde du freelance augmente de 0.5 ETH dans MetaMask. |
+| 6 | Client | **Approuver et payer**, depuis l'encadré « À faire » | Statut **Payée**, `PaymentReleased`, le solde du freelance augmente de 0.5 ETH dans MetaMask. |
 
 ### Scénario rejeté 1 : un client accepte sa propre mission
 
 | # | Compte | Action | Résultat attendu |
 |---|---|---|---|
 | 1 | Client (#1) | Activer **Mode démo** (en haut de la liste) | Les actions normalement masquées apparaissent en pointillés. |
-| 2 | Client | Sur une mission **Ouverte** qu'il a créée → **Accepter** | Encadré rouge **« Transaction rejetée par le contrat »** avec `revert "Client cannot accept own mission"`. |
+| 2 | Client | Déplier une mission **Ouverte** qu'il a créée → **Accepter** (bouton en pointillés) | Encadré rouge **« Transaction rejetée par le contrat »** avec `revert "Client cannot accept own mission"`. |
 
 À dire au jury : *ce n'est pas l'interface qui bloque, c'est le contrat.* Le mode démo retire les filtres de l'UI, et le `require` de `acceptMission` refuse quand même. Avant d'ouvrir MetaMask, l'application simule la transaction (`eth_call`) pour récupérer le message exact.
 
@@ -213,10 +222,10 @@ Préparation : nœud lancé, `npm run deploy` et `npm run seed` exécutés, fron
 
 | # | Compte | Action | Résultat attendu |
 |---|---|---|---|
-| 1 | Freelance (#2) | Mission seedée « Affiche JPO » (déjà acceptée) → **Livrer le travail** (onglet *Texte*, n'importe quel texte) | Statut **Livrée**, la ligne indique « encore 3 j avant la réclamation automatique ». |
-| 2 | Freelance | **Réclamer le paiement** | Encadré rouge `revert "Review period not over"`. |
+| 1 | Freelance (#2) | Mission seedée « Affiche JPO » (déjà acceptée) → **Livrer le travail** (onglet *Texte*, n'importe quel texte) | Statut **Livrée**, la ligne indique « En attente de validation · réclamation possible dans 3 j 0 h ». |
+| 2 | Freelance | Déplier la mission → **Réclamer le paiement** | Encadré rouge `revert "Review period not over"`. |
 | 3 | — | Barre du haut : **+3 jours** (avance l'horloge du nœud local avec `evm_increaseTime`) | Horloge de la chaîne avancée, la ligne indique « Période de revue écoulée ». |
-| 4 | Freelance | **Réclamer le paiement** | Succès : `PaymentReleased` avec la mention « réclamation après 3 jours ». |
+| 4 | Freelance | **Réclamer le paiement**, qui apparaît maintenant sur la ligne et dans « À faire » | Succès : `PaymentReleased` avec la mention « réclamation après 3 jours ». |
 
 ### Rejets supplémentaires, si le jury en demande
 
@@ -224,7 +233,7 @@ Préparation : nœud lancé, `npm run deploy` et `npm run seed` exécutés, fron
 |---|---|---|
 | Montant nul | Formulaire avec `0` ETH | `Amount must be > 0` |
 | Échéance passée | Formulaire avec une date d'hier | `Deadline must be in the future` |
-| Double paiement | Mode démo, mission **Payée** → **Approuver et payer** | `Invalid state` |
+| Double paiement | Mode démo, déplier une mission **Payée** → **Approuver et payer** | `Invalid state` |
 | Non-arbitre qui tranche | Litige ouvert, compte Client, mode démo → **Arbitrer** | `Only arbiter` |
 | Arbitrage 50/50 | Litige ouvert, compte Arbitre (#0) → **Arbitrer** → 50 % | `DisputeResolved` et chacun reçoit la moitié |
 | Signature refusée | Cliquer *Refuser* dans MetaMask | « Signature refusée » |
