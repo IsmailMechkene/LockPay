@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Hardhat build output
+artifacts/
+cache/
+types/
+typechain-types/
+ignition/deployments/chain-31337/
+coverage/
+coverage.json
+
+# Frontend build
+frontend/dist/
+
+# Secrets - NEVER commit private keys or mnemonics
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
