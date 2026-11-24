@@ -49,7 +49,7 @@ Quand les 5 étapes sont cochées, l'encadré disparaît.
 
 **Langue.** Le bouton **FR / EN** en haut à droite change la langue de toute l'interface. Le choix est mémorisé.
 
-**Thème.** À côté, trois boutons règlent l'affichage : l'écran suit le thème du système, le soleil active un mode clair à contraste élevé (fond blanc, texte noir, couleurs franches) prévu pour un projecteur peu lumineux, la lune force le mode sombre. Le choix est mémorisé.
+**Thème.** À côté, trois boutons règlent l'affichage : l'écran suit le thème du système, le soleil active un mode clair à contraste élevé (panneaux blancs bien détachés, texte presque noir, couleurs franches) prévu pour un projecteur peu lumineux, la lune force le mode sombre. Le choix est mémorisé.
 
 ## 3. Visite de l'interface
 
