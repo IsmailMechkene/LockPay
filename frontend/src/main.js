@@ -20,6 +20,7 @@ import "./style.css";
 import { ethers } from "ethers";
 import { icons } from "./icons.js";
 import { t, getLang, setLang, translateStatic } from "./i18n.js";
+import { getTheme, setTheme } from "./theme.js";
 import {
   deployment, readContract, readProvider, CHAIN_ID,
   hasMetaMask, connectWallet, switchToLocalNetwork, isContractDeployed,
@@ -498,6 +499,14 @@ function renderLangSwitch() {
   });
 }
 
+function renderThemeSwitch() {
+  document.querySelectorAll("[data-theme-choice]").forEach((b) => {
+    const active = b.dataset.themeChoice === getTheme();
+    b.classList.toggle("is-active", active);
+    b.setAttribute("aria-pressed", active);
+  });
+}
+
 // --- Notices (red error box / green confirmation) --------------------------
 
 function notify({ kind, title, reason, explanation }) {
@@ -895,6 +904,12 @@ function hydrateIcons(root = document) {
 function wireEvents() {
   // One delegated click handler for every [data-action] button.
   document.addEventListener("click", async (e) => {
+    const themeBtn = e.target.closest("[data-theme-choice]");
+    if (themeBtn) {
+      setTheme(themeBtn.dataset.themeChoice);
+      return renderThemeSwitch();
+    }
+
     const lang = e.target.closest("[data-lang]");
     if (lang) {
       setLang(lang.dataset.lang);
@@ -986,6 +1001,7 @@ async function init() {
   try {
     translateStatic();
     hydrateIcons();
+    renderThemeSwitch();
     wireEvents();
     await Promise.all([importSeed(), restoreSession()]);
     await refresh();

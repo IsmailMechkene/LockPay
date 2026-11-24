@@ -8,6 +8,10 @@ const STORAGE_KEY = "lockpay.lang";
 const fr = {
   "brand.tagline": "Séquestre de missions étudiantes",
   "lang.label": "Langue",
+  "theme.label": "Thème",
+  "theme.auto": "Automatique (suit le système)",
+  "theme.light": "Clair, contraste élevé (projecteur)",
+  "theme.dark": "Sombre",
 
   // Chain bar
   "chain.notDeployed": "Contrat non déployé",
@@ -249,6 +253,10 @@ const fr = {
 const en = {
   "brand.tagline": "Escrow for student freelance missions",
   "lang.label": "Language",
+  "theme.label": "Theme",
+  "theme.auto": "Automatic (follows the system)",
+  "theme.light": "Light, high contrast (projector)",
+  "theme.dark": "Dark",
 
   "chain.notDeployed": "Contract not deployed",
   "chain.nodeDown": "Hardhat node unreachable",

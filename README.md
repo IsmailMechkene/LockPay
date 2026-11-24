@@ -180,7 +180,7 @@ npm run frontend   # = npm --prefix frontend run dev
 
 Ouvrir l'URL affichée par Vite (en général `http://localhost:5173` ; si ce port est pris, Vite choisit le suivant), puis cliquer **Connecter MetaMask**.
 
-Si quelque chose manque (nœud arrêté, contrat non déployé, MetaMask absent, mauvais réseau), un encadré **« Avant de commencer »** affiche la prochaine étape à faire et se coche tout seul quand elle est réglée. Le bouton **FR / EN** de la barre du haut change la langue de l'interface.
+Si quelque chose manque (nœud arrêté, contrat non déployé, MetaMask absent, mauvais réseau), un encadré **« Avant de commencer »** affiche la prochaine étape à faire et se coche tout seul quand elle est réglée. Le bouton **FR / EN** de la barre du haut change la langue de l'interface, et le sélecteur de thème (écran / soleil / lune) passe en automatique, clair à contraste élevé (pour un projecteur) ou sombre.
 
 ### Lire l'interface
 

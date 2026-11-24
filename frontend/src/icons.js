@@ -6,7 +6,7 @@ import {
   EyeOff, FastForward, FileCheck, FileCode, FileUp, FlaskConical, Gavel, HandCoins,
   Handshake, HardDrive, Hourglass, Inbox, Link, Loader, Lock, Radio, Scale, Send,
   ShieldAlert, ShieldCheck, TriangleAlert, Type, Unplug, Upload, User, Wallet, X,
-  Fingerprint, Check, Circle, ListTodo,
+  Fingerprint, Check, Circle, ListTodo, Sun, Moon, Monitor,
 } from "lucide";
 
 const ICONS = {
@@ -18,6 +18,7 @@ const ICONS = {
   radio: Radio, scale: Scale, send: Send, "shield-alert": ShieldAlert, "shield-check": ShieldCheck,
   "triangle-alert": TriangleAlert, type: Type, unplug: Unplug, upload: Upload, user: User,
   wallet: Wallet, x: X, fingerprint: Fingerprint, check: Check, circle: Circle, "list-todo": ListTodo,
+  sun: Sun, moon: Moon, monitor: Monitor,
 };
 
 /** Returns the <svg> markup of an icon, e.g. icons("lock"). */

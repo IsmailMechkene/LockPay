@@ -32,8 +32,10 @@
   color-scheme: light;
 }
 
+/* Dark: follows the OS in "auto" (no data-theme), or forced with data-theme="dark".
+   The two blocks must stay identical. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme]) {
     --paper: #16150f;
     --surface: #1e1d17;
     --surface-2: #29271f;
@@ -53,6 +55,53 @@
     --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 12px 32px -12px rgba(0, 0, 0, 0.6);
     color-scheme: dark;
   }
+}
+:root[data-theme="dark"] {
+  --paper: #16150f;
+  --surface: #1e1d17;
+  --surface-2: #29271f;
+  --ink: #ece8dc;
+  --ink-2: #c3beb0;
+  --muted: #8d887c;
+  --rule: #34322a;
+  --rule-strong: #4a4639;
+  --accent: #5fae8a;
+  --accent-hover: #74c19d;
+  --accent-ink: #0f1a14;
+  --accent-soft: #1f3329;
+  --progress: #8fb0dc;  --progress-soft: #1f2a38;
+  --review: #e0b45a;    --review-soft: #352b17;
+  --alert: #ec8a70;     --alert-soft: #3a221a;
+  --error: #f08377;     --error-soft: #3a1d1a;  --error-rule: #6e322c;
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+/* Light, high contrast: chosen by hand (sun button) for weak projectors.
+   Pure white, black text, dark rules and saturated status colours. The
+   pale tints of the default theme vanish on a washed-out projector. */
+:root[data-theme="light"] {
+  --paper: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #e4e4e4;
+  --ink: #000000;
+  --ink-2: #1a1a1a;
+  --muted: #474747;
+  --rule: #9e9e9e;
+  --rule-strong: #4f4f4f;
+
+  --accent: #00653a;
+  --accent-hover: #004a2a;
+  --accent-ink: #ffffff;
+  --accent-soft: #c4e8d1;
+
+  --progress: #0a3a8c;  --progress-soft: #d0ddf5;
+  --review: #6e4200;    --review-soft: #f9dda0;
+  --alert: #9c2000;     --alert-soft: #f8cdbf;
+  --error: #a80000;     --error-soft: #fddad6;  --error-rule: #c9605a;
+
+  --shadow: 0 0 0 1px #4f4f4f, 0 8px 24px -10px rgba(0, 0, 0, 0.35);
+  color-scheme: light;
 }
 
 /* ---------- Base ---------- */
@@ -531,3 +580,24 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); box-sh
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ---------- High-contrast light: extra weight for projectors ---------- */
+[data-theme="light"] body { font-weight: 500; }
+[data-theme="light"] .icon { stroke-width: 2.2; }
+[data-theme="light"] .panel,
+[data-theme="light"] .todo,
+[data-theme="light"] .account { border-color: var(--rule-strong); }
+[data-theme="light"] .stamp { border-width: 1.5px; font-weight: 600; }
+[data-theme="light"] .chip { font-weight: 600; }
+[data-theme="light"] .mission.is-open { background: #f4f4f4; box-shadow: inset 4px 0 0 var(--accent); }
+[data-theme="light"] .mission-row:hover { background: var(--surface-2); }
+[data-theme="light"] .topbar { background: var(--paper); backdrop-filter: none; border-bottom-color: var(--rule-strong); }
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="datetime-local"],
+[data-theme="light"] textarea { border-width: 1.5px; }
+[data-theme="light"] .filter.is-active { border-bottom-width: 3px; }
+[data-theme="light"] .dialog::backdrop { background: rgba(0, 0, 0, 0.55); }
+
+/* Theme switch reuses the language switch look, with icons. */
+.theme-switch button { display: grid; place-items: center; min-width: 30px; padding: 4px 7px; }
+.theme-switch .icon { width: 14px; height: 14px; }

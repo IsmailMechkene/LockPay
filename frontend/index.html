@@ -9,9 +9,18 @@
     <!-- Boot screen. Inline on purpose: style.css is loaded by main.js, so on a
          reload the page would otherwise show unstyled and half-filled. The app
          stays hidden until main.js has done its first render (html.is-ready). -->
+    <script>
+      // Apply the saved theme before first paint (see src/theme.js).
+      try {
+        const th = localStorage.getItem("lockpay.theme");
+        if (th === "light" || th === "dark") document.documentElement.dataset.theme = th;
+      } catch {}
+    </script>
     <style>
       html { background: #f3f0e8; color: #1f5e46; }
-      @media (prefers-color-scheme: dark) { html { background: #16150f; color: #5fae8a; } }
+      @media (prefers-color-scheme: dark) { html:not([data-theme]) { background: #16150f; color: #5fae8a; } }
+      html[data-theme="light"] { background: #ffffff; color: #00653a; }
+      html[data-theme="dark"] { background: #16150f; color: #5fae8a; }
       html:not(.is-ready) body > :not(.boot) { visibility: hidden; }
       .boot {
         position: fixed; inset: 0; z-index: 100;
@@ -51,6 +60,11 @@
       <div class="lang-switch" role="group" data-i18n-aria="lang.label">
         <button type="button" data-lang="fr" lang="fr">FR</button>
         <button type="button" data-lang="en" lang="en">EN</button>
+      </div>
+      <div class="lang-switch theme-switch" role="group" data-i18n-aria="theme.label">
+        <button type="button" data-theme-choice="auto" data-i18n-title="theme.auto" data-i18n-aria="theme.auto"><i data-lucide="monitor"></i></button>
+        <button type="button" data-theme-choice="light" data-i18n-title="theme.light" data-i18n-aria="theme.light"><i data-lucide="sun"></i></button>
+        <button type="button" data-theme-choice="dark" data-i18n-title="theme.dark" data-i18n-aria="theme.dark"><i data-lucide="moon"></i></button>
       </div>
       <div class="wallet" id="wallet"></div>
     </header>
