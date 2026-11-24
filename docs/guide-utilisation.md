@@ -110,7 +110,7 @@ La colonne de droite affiche chaque événement émis par le contrat (mission cr
    - **Titre** : public, enregistré sur la blockchain ;
    - **Description** : livrables, format, critères. Elle reste dans votre navigateur ; seule son empreinte est envoyée (affichée sous le champ : *Empreinte envoyée*) ;
    - **Montant** en ETH, par exemple `0.5` ;
-   - **Échéance** : date limite de livraison (7 jours par défaut).
+   - **Échéance** : date limite de livraison (aujourd’hui à 23 h 59 par défaut).
 2. Cliquez **Bloquer les fonds et publier**, puis confirmez dans MetaMask.
 3. La mission apparaît avec le statut **Ouverte** et l'ETH est bloqué dans le contrat (le total « en séquestre » augmente).
 

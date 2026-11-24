@@ -57,6 +57,14 @@ const wrongNetwork = () => !!state.account && state.chainId !== CHAIN_ID;
 const chainNow = () => Math.floor(Date.now() / 1000) + state.timeOffset;
 const chainReady = () => !!deployment && !state.nodeDown && !state.contractMissing;
 
+/** Default deadline: today (chain clock) at 23:59. Not "now" itself, since the
+ *  contract requires a deadline strictly in the future. */
+function defaultDeadline() {
+  const d = new Date(chainNow() * 1000);
+  d.setHours(23, 59, 0, 0);
+  return toDatetimeLocal(Math.floor(d.getTime() / 1000));
+}
+
 const TONES = {
   Open: "open", Accepted: "progress", Delivered: "review", Completed: "done",
   Cancelled: "muted", Disputed: "alert", Resolved: "done",
@@ -590,7 +598,7 @@ async function onCreate(event) {
   const receipt = await runTx("create", "createMission", [title, descriptionHash, deadline], { value }, t("ok.create"));
   if (receipt) {
     form.reset();
-    form.deadline.value = toDatetimeLocal(chainNow() + 7 * 86400);
+    form.deadline.value = defaultDeadline();
     updateDescriptionHash();
   }
 }
@@ -963,16 +971,35 @@ async function restoreSession() {
   } catch { /* ignore */ }
 }
 
-async function init() {
-  translateStatic();
-  hydrateIcons();
-  wireEvents();
-  await Promise.all([importSeed(), restoreSession()]);
-  await refresh();
+/** Hides the boot screen of index.html once the first render is on screen. */
+function revealApp() {
+  if (document.documentElement.classList.contains("is-ready")) return;
+  requestAnimationFrame(() => {
+    document.documentElement.classList.add("is-ready");
+    setTimeout(() => document.querySelector(".boot")?.remove(), 400);
+  });
+}
 
-  const form = $("#create-form");
-  form.deadline.value = toDatetimeLocal(chainNow() + 7 * 86400);
-  updateDescriptionHash();
+async function init() {
+  // Never keep the loader up for long, even if the node is slow or init throws.
+  const bootTimeout = setTimeout(revealApp, 4000);
+  try {
+    translateStatic();
+    hydrateIcons();
+    wireEvents();
+    await Promise.all([importSeed(), restoreSession()]);
+    await refresh();
+
+    const form = $("#create-form");
+    form.deadline.value = defaultDeadline();
+    updateDescriptionHash();
+  } finally {
+    clearTimeout(bootTimeout);
+    // Fonts are part of the first paint too: wait for them (briefly) so the
+    // text does not jump right after the loader goes away.
+    await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 800))]);
+    revealApp();
+  }
 
   // While the node or the contract is missing, check again every 3 s so the
   // setup checklist ticks itself.

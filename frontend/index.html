@@ -6,8 +6,32 @@
     <meta name="description" content="LockPay — séquestre Ethereum pour missions freelance étudiantes" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>LockPay</title>
+    <!-- Boot screen. Inline on purpose: style.css is loaded by main.js, so on a
+         reload the page would otherwise show unstyled and half-filled. The app
+         stays hidden until main.js has done its first render (html.is-ready). -->
+    <style>
+      html { background: #f3f0e8; color: #1f5e46; }
+      @media (prefers-color-scheme: dark) { html { background: #16150f; color: #5fae8a; } }
+      html:not(.is-ready) body > :not(.boot) { visibility: hidden; }
+      .boot {
+        position: fixed; inset: 0; z-index: 100;
+        display: grid; place-items: center;
+        background: inherit; transition: opacity 0.25s ease-out;
+      }
+      .boot svg { width: 40px; height: 40px; animation: boot-pulse 1.1s ease-in-out infinite; }
+      html.is-ready .boot { opacity: 0; pointer-events: none; }
+      @keyframes boot-pulse { 0%, 100% { opacity: 0.35; transform: scale(0.94); } 50% { opacity: 1; transform: scale(1); } }
+      @media (prefers-reduced-motion: reduce) { .boot svg { animation: none; } }
+    </style>
   </head>
   <body>
+    <div class="boot" aria-hidden="true">
+      <svg viewBox="0 0 32 32">
+        <path d="M10 14V10a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+        <rect x="5" y="14" width="22" height="15" rx="3" fill="currentColor" />
+      </svg>
+    </div>
+
     <!-- Top bar: brand, chain status, language, wallet.
          Texts with data-i18n* are filled by i18n.js (French / English). -->
     <header class="topbar">
